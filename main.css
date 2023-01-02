@@ -1,0 +1,67 @@
+.logo {
+  color: white;
+}
+
+.add-member-form {
+  display: block;
+  margin-top: 60px;
+  margin-bottom: 10px;
+}
+
+.member-name-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+}
+
+.member-amount-wrapper {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: space-between;
+  width: 220px;
+}
+
+.seat-confirm-wrapper {
+  margin: 20px 0px;
+}
+
+.seat-confirm {
+  display: flex;
+  justify-content: center;
+}
+
+.added-name-list {
+  height: 30px;
+  font-size: 12px;
+  border: 0.3px solid gray;
+  margin: 5px 10px;
+  padding: 5px;
+}
+
+.added-member-list {
+  padding: 0px;
+}
+
+.delete-added-member {
+  height: 20px;
+  border-radius: 3px;
+  border: none;
+}
+
+.current-member {
+  text-align: center;
+  margin: 10px;
+}
+
+.current-member-amount {
+  font-size: 20px;
+  color: red;
+  font-weight: bold;
+}
+
+.group-topic {
+  margin: 10px;
+}

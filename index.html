@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>調整ちゃん | 幹事に優しい飲み会調整アプリ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="main.css" />
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  </head>
+
+  <body>
+    <div class="nav-bar fixed-top navbar-expand-md bg-info">
+      <div
+        class="container-fluid d-flex flex-row justify-content-between nav-bar-fix"
+      >
+        <!-- ホームリンク -->
+        <a href="#" class="navbar-brand logo"> 調整ちゃん </a>
+        <!-- 登録ボタン -->
+        <div class="pay-mgr-wrapper">
+          <button type="button" class="btn btn-light" id="pay-mgr">
+            出席簿
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="registration-form">
+      <form class="add-member-form">
+        <div class="member-name-wrapper">
+          <div class="member-name-form">
+            <input
+              id="member-name-input"
+              type="text"
+              placeholder="名前"
+              required
+            />
+          </div>
+          <div class="member-name-button">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="member-name-add"
+            >
+              追加
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="current-member">
+      追加した人数：<span
+        class="current-member-amount"
+        id="current-member-amount"
+        >0</span
+      >人
+    </div>
+    <section class="added-member">
+      <ul class="added-member-list" id="added-member-list">
+        <!-- メンバーリストを追加 -->
+      </ul>
+    </section>
+    <div class="member-amount-wrapper" id="">
+      <div class="member-amount-form">
+        <input
+          id="member-amount-input"
+          type="number"
+          placeholder="人数"
+          required
+        />
+      </div>
+      <div class="member-amount-topic">人</div>
+    </div>
+    <div class="seat-confirm-wrapper">
+      <div class="seat-confirm">
+        <button class="btn btn-primary make-group" id="make-group">
+          グループ作成
+        </button>
+      </div>
+    </div>
+    <!-- Script -->
+    <script src="module/main.js"></script>
+    <!-- Font Awesome -->
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+    ></script>
+  </body>
+</html>
