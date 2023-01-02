@@ -32,9 +32,6 @@
           [JSON.stringify(sessionNameList)]
         );
       }
-      console.log(
-        "sessionNameList更新後: " + window.sessionStorage.getItem(["nameList"])
-      );
       dispAddedMember();
       //input欄の削除
       $("#member-name-input").val("");
@@ -118,7 +115,6 @@ function dispAddedMember() {
 
 //追加したメンバーの削除&制御用メソッド
 function deleteFromSession(name) {
-  console.log(name);
   const sessionNameList = window.sessionStorage
     .getItem(["nameList"])
     .replaceAll('"', "")
@@ -141,6 +137,15 @@ function deleteFromSession(name) {
 
 //人数の割り出し制御
 function makeGroup(amount) {
+  //既存のグループ分けが存在する場合の分岐
+  if ($(".group-wrapper").length) {
+    const result = window.confirm(
+      "既存のグループ分けは削除されますがよろしいですか？"
+    );
+    if (result == false) {
+      return;
+    }
+  }
   $(".group-wrapper").remove();
   const sessionNameList = window.sessionStorage
     .getItem(["nameList"])
@@ -155,10 +160,8 @@ function makeGroup(amount) {
     const groupWrapper = `<div class="group-wrapper"></div>`;
     $(".seat-confirm-wrapper").after(groupWrapper);
   }
-  console.log(randomNameList);
   while (cursor < randomNameList.length) {
     count++;
-    console.log("count：" + count);
     const parentUl = `
     <div class="group-topic" id="group-topic-${count}">
         グループ${count}
@@ -169,7 +172,6 @@ function makeGroup(amount) {
       $(".group-wrapper").append(parentUl);
     } else {
       $(`#parentUl-${count - 1}`).after(parentUl);
-      console.log("2個目以降の追加");
     }
     for (let i = 0; i < amount; i++) {
       if (cursor < randomNameList.length) {
@@ -182,59 +184,9 @@ function makeGroup(amount) {
         cursor++;
       }
     }
-    console.log("cursor：" + cursor);
   }
 }
-/*
-function makeGroup(amount) {
-    const sessionNameList = window.sessionStorage.getItem(['nameList']).replaceAll('[', '').replaceAll(']', '').replaceAll('"', '').split(",");
-    const randomNameList = arrayShuffle(sessionNameList);
-    console.log(randomNameList.reverse());
-    console.log(randomNameList);
-    let count = 0;
-    let remainedLength = randomNameList.length;
-    let target = 0;
-    while(remainedLength > 0) {
-        remainedLength -= amount;
-        count++;
-        const parentUl = `
-        <div class="group-topic" id="group-topic-${count}">
-            グループ${count}
-        </div>
-        <ul class="list-group list-group-flush"></ul>
-        `;
-        $(".seat-confirm-wrapper").after(parentUl);
-        for(let i=0;i<amount;i++) {
-            const childLi = `
-            <li class="list-group-item">
-                ${randomNameList[randomNameList.length - target]}
-            </li>
-            `
-            $(`#group-topic-${count}`).append(childLi);
-            target++;
-        }
-    }
-    if(remainedLength > 0) {
-        count++;
-        const parentUl = `
-        <div class="group-topic" id="group-topic-${count}">
-            グループ${count}
-        </div>
-        <ul class="list-group list-group-flush"></ul>
-        `;
-        $(".seat-confirm-wrapper").after(parentUl);
-        for(let i=0;i<remainedLength;i++) {
-            const childLi = `
-            <li class="list-group-item">
-                ${randomNameList[target]}
-            </li>
-            `
-            $(`#group-topic-${count}`).append(childLi);
-            target++;
-        }
-    }
-}
-*/
+
 //シャッフルロジック
 function arrayShuffle(array) {
   for (var i = array.length - 1; 0 < i; i--) {
