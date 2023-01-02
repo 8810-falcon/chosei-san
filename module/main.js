@@ -141,6 +141,7 @@ function deleteFromSession(name) {
 
 //人数の割り出し制御
 function makeGroup(amount) {
+  $(".group-wrapper").remove();
   const sessionNameList = window.sessionStorage
     .getItem(["nameList"])
     .replaceAll("[", "")
@@ -150,6 +151,10 @@ function makeGroup(amount) {
   const randomNameList = arrayShuffle(sessionNameList);
   let cursor = 0;
   let count = 0;
+  if (count == 0) {
+    const groupWrapper = `<div class="group-wrapper"></div>`;
+    $(".seat-confirm-wrapper").after(groupWrapper);
+  }
   console.log(randomNameList);
   while (cursor < randomNameList.length) {
     count++;
@@ -161,7 +166,7 @@ function makeGroup(amount) {
     <ul class="list-group list-group-flush random-name-list" id="parentUl-${count}"></ul>
     `;
     if (count == 1) {
-      $(".seat-confirm-wrapper").after(parentUl);
+      $(".group-wrapper").append(parentUl);
     } else {
       $(`#parentUl-${count - 1}`).after(parentUl);
       console.log("2個目以降の追加");
