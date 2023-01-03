@@ -1,5 +1,21 @@
 (function ($) {
   $(document).ready(function () {
+    //デバイス判定
+    if (!isSmartPhone()) {
+      $("body").children().remove();
+      const message = `
+        <div class="ban-message">
+            <h1 class="main-message">
+                「調整ちゃん」はスマートフォン専用サイトです。
+            </h1>
+            <h3 class="detail-message">
+                スマートフォンをご利用ください。
+            </h3>
+        </div>
+        `;
+      $("body").append(message);
+    }
+
     let nameList = window.sessionStorage.getItem(["nameList"]);
     dispAddedMember();
 
@@ -21,7 +37,6 @@
           [JSON.stringify(memberName)]
         );
       } else {
-        console.log(sessionNameList);
         sessionNameList = sessionNameList
           .replaceAll('"', "")
           .replaceAll("[", "")
@@ -196,4 +211,16 @@ function arrayShuffle(array) {
     array[r] = tmp;
   }
   return array;
+}
+
+//スマホかどうかのデバイス判定
+function isSmartPhone() {
+  if (
+    window.matchMedia &&
+    window.matchMedia("(max-device-width: 640px)").matches
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }

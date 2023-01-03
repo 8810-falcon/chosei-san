@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>調整ちゃん | 幹事に優しい飲み会調整アプリ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="start.css" />
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  </head>
+
+  <body>
+    <div class="nav-bar fixed-top navbar-expand-md bg-info">
+      <div
+        class="container-fluid d-flex flex-row justify-content-between nav-bar-fix"
+      >
+        <!-- ホームリンク -->
+        <a href="#" class="navbar-brand logo"> 調整ちゃん </a>
+      </div>
+    </div>
+    <div class="about-service-wrapper">
+      <div class="about-service">
+        飲み会の幹事は<span class="underlined"
+          >席決めや支払いの管理が面倒くさい...</span
+        >
+      </div>
+      <div class="about-service">
+        そんな時には
+        <span class="bigger-red"> 『調整ちゃん』！ </span>
+      </div>
+    </div>
+
+    <section class="input-password-wrapper">
+      <div class="password-topic">幹事用のパスワードを入力してください。</div>
+      <input
+        name="password"
+        class="password-input"
+        id="password-input"
+        type="password"
+      />
+      <button type="submit" class="input-complete" id="input-complete">
+        完了
+      </button>
+    </section>
+    <!-- Script -->
+    <script src="module/start.js"></script>
+    <!-- Font Awesome -->
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+    ></script>
+  </body>
+</html>
