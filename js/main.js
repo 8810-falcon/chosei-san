@@ -35,7 +35,7 @@ let queryParam = location.search.replaceAll("?id=", "");
     dispGroup();
     console.log(queryParam);
     //クエリパラメータが存在しない場合、初期画面に飛ばす
-    if (queryParam.length == 0) {
+    if (queryParam.length !== 18) {
       window.location.href = "start.html";
     }
     //デバイス判定
@@ -151,33 +151,6 @@ function findDuplicatedName(name) {
 }
 
 //追加したメンバーの制御用メソッド
-/*
-function dispAddedMember() {
-  //既存リストを削除
-  $("#added-member-list").children().remove();
-  //inputされた名前の追加表示
-  if (window.sessionStorage.getItem(["nameList"]) == null) {
-    return;
-  }
-  const dispList = window.sessionStorage
-    .getItem(["nameList"])
-    .replaceAll('"', "")
-    .replaceAll("[", "")
-    .replaceAll("]", "")
-    .split(",");
-  $("#current-member-amount").text(dispList.length);
-  for (let i = 0; i < dispList.length; i++) {
-    const listElem = `
-            <li class="d-flex justify-content-between added-name-list">
-                <div class="added-name" id="added-name-${i}">${dispList[i]}</div>
-                <button type="button" class="delete-added-member" id="delete-added-member-${i}">削除</button>
-            </li>
-        `;
-    $("#added-member-list").append(listElem);
-  }
-}
-*/
-
 async function dispMemeber() {
   //既存リストを削除
   $("#added-member-list").children().remove();
@@ -241,7 +214,7 @@ async function dispGroup() {
     }
     const groupAmount = snapshot.val().length - 1;
     console.log("グループ数" + groupAmount);
-    const groupWrapper = `<div class="group-wrapper"></div>`;
+    const groupWrapper = `<div class="group-wrapper" style="display:none;"></div>`;
     $(".seat-confirm-wrapper").after(groupWrapper);
     let count = 1;
     for (let i = 0; i < groupAmount; i++) {
@@ -257,7 +230,7 @@ async function dispGroup() {
         } else {
           $(`#parentUl-${i}`).after(parentUl);
         }
-        const nameList = Object.values(snapshot.val()[count]);
+        const nameList = Object.values(snapshot.val());
         $("#current-member-amount").text(count);
         for (let j = 0; j < nameList.length; j++) {
           const childLi = `
@@ -270,6 +243,7 @@ async function dispGroup() {
         count++;
       });
     }
+    $(".group-wrapper").css("display", "block");
   });
 }
 
@@ -284,10 +258,10 @@ async function makeGroup(amount) {
       return;
     }
   }
+  $(".group-wrapper").css("display", "none");
   await set(ref(database, queryParam + "/group"), {
     null: null,
   });
-  $(".group-wrapper").remove();
   const sessionNameList = window.sessionStorage
     .getItem(["nameList"])
     .replaceAll("[", "")
@@ -297,33 +271,12 @@ async function makeGroup(amount) {
   const randomNameList = arrayShuffle(sessionNameList);
   let cursor = 0;
   let count = 0;
-  if (count == 0) {
-    const groupWrapper = `<div class="group-wrapper"></div>`;
-    $(".seat-confirm-wrapper").after(groupWrapper);
-  }
   while (cursor < randomNameList.length) {
     count++;
-    const parentUl = `
-    <div class="group-topic" id="group-topic-${count}">
-        グループ${count}
-    </div>
-    <ul class="list-group list-group-flush random-name-list" id="parentUl-${count}"></ul>
-    `;
-    if (count == 1) {
-      $(".group-wrapper").append(parentUl);
-    } else {
-      $(`#parentUl-${count - 1}`).after(parentUl);
-    }
     //ここでDBにグループ分けを反映
     let nameListDb = [];
     for (let i = 0; i < amount; i++) {
       if (cursor < randomNameList.length) {
-        const childLi = `
-                <li class="list-group-item">
-                    ${randomNameList[cursor]}
-                </li>
-                `;
-        $(`#parentUl-${count}`).append(childLi);
         nameListDb.push(randomNameList[cursor]);
         cursor++;
       }
@@ -332,6 +285,7 @@ async function makeGroup(amount) {
       [count]: nameListDb,
     });
   }
+  dispGroup();
 }
 
 //シャッフルロジック
