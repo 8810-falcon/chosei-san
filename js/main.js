@@ -5,6 +5,7 @@ import {
   ref,
   set,
   onValue,
+  update,
 } from "https://www.gstatic.com/firebasejs/9.8.2/firebase-database.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -31,6 +32,7 @@ let queryParam = location.search.replaceAll("?id=", "");
 
 (function ($) {
   $(document).ready(function () {
+    dispGroup();
     console.log(queryParam);
     //クエリパラメータが存在しない場合、初期画面に飛ばす
     if (queryParam.length == 0) {
@@ -149,6 +151,7 @@ function findDuplicatedName(name) {
 }
 
 //追加したメンバーの制御用メソッド
+/*
 function dispAddedMember() {
   //既存リストを削除
   $("#added-member-list").children().remove();
@@ -173,30 +176,29 @@ function dispAddedMember() {
     $("#added-member-list").append(listElem);
   }
 }
+*/
 
 async function dispMemeber() {
   //既存リストを削除
   $("#added-member-list").children().remove();
-  const nameList = await onValue(
-    ref(database, queryParam + "/member"),
-    (snapshot) => {
-      if (snapshot.val() == null) {
-        return;
-      }
-      const nameList = Object.values(snapshot.val()["memberList"]);
-      console.log("nameList:" + nameList);
-      $("#current-member-amount").text(nameList.length);
-      for (let i = 0; i < nameList.length; i++) {
-        const listElem = `
+  await onValue(ref(database, queryParam + "/member"), (snapshot) => {
+    if (snapshot.val() == null) {
+      return;
+    }
+    const nameList = Object.values(snapshot.val()["memberList"]);
+    console.log("nameList:" + nameList);
+    $("#current-member-amount").text(nameList.length);
+    for (let i = 0; i < nameList.length; i++) {
+      const listElem = `
             <li class="d-flex justify-content-between added-name-list">
                 <div class="added-name" id="added-name-${i}">${nameList[i]}</div>
                 <button type="button" class="delete-added-member" id="delete-added-member-${i}">削除</button>
             </li>
         `;
-        $("#added-member-list").append(listElem);
-      }
+      $("#added-member-list").append(listElem);
     }
-  );
+    window.sessionStorage.setItem(["nameList"], [JSON.stringify(nameList)]);
+  });
 }
 
 //追加したメンバーの削除&制御用メソッド
@@ -228,8 +230,51 @@ function deleteFromSession(name) {
   }
 }
 
+//1/15ここまで
+async function dispGroup() {
+  if ($(".group-wrapper").length) {
+    $(".group-wrapper").remove();
+  }
+  await onValue(ref(database, queryParam + "/group"), (snapshot) => {
+    if (snapshot.val() == null) {
+      return;
+    }
+    const groupAmount = snapshot.val().length - 1;
+    console.log("グループ数" + groupAmount);
+    const groupWrapper = `<div class="group-wrapper"></div>`;
+    $(".seat-confirm-wrapper").after(groupWrapper);
+    let count = 1;
+    for (let i = 0; i < groupAmount; i++) {
+      onValue(ref(database, queryParam + "/group/" + count), (snapshot) => {
+        const parentUl = `
+        <div class="group-topic" id="group-topic-${count}">
+        グループ${i + 1}
+        </div>
+        <ul class="list-group list-group-flush random-name-list" id="parentUl-${count}"></ul>
+        `;
+        if (count == 1) {
+          $(".group-wrapper").append(parentUl);
+        } else {
+          $(`#parentUl-${i}`).after(parentUl);
+        }
+        const nameList = Object.values(snapshot.val()[count]);
+        $("#current-member-amount").text(count);
+        for (let j = 0; j < nameList.length; j++) {
+          const childLi = `
+          <li class="list-group-item">
+          ${nameList[j]}
+          </li>
+          `;
+          $(`#parentUl-${count}`).append(childLi);
+        }
+        count++;
+      });
+    }
+  });
+}
+
 //人数の割り出し制御
-function makeGroup(amount) {
+async function makeGroup(amount) {
   //既存のグループ分けが存在する場合の分岐
   if ($(".group-wrapper").length) {
     const result = window.confirm(
@@ -239,6 +284,9 @@ function makeGroup(amount) {
       return;
     }
   }
+  await set(ref(database, queryParam + "/group"), {
+    null: null,
+  });
   $(".group-wrapper").remove();
   const sessionNameList = window.sessionStorage
     .getItem(["nameList"])
@@ -266,6 +314,8 @@ function makeGroup(amount) {
     } else {
       $(`#parentUl-${count - 1}`).after(parentUl);
     }
+    //ここでDBにグループ分けを反映
+    let nameListDb = [];
     for (let i = 0; i < amount; i++) {
       if (cursor < randomNameList.length) {
         const childLi = `
@@ -274,9 +324,13 @@ function makeGroup(amount) {
                 </li>
                 `;
         $(`#parentUl-${count}`).append(childLi);
+        nameListDb.push(randomNameList[cursor]);
         cursor++;
       }
     }
+    await update(ref(database, queryParam + "/group"), {
+      [count]: nameListDb,
+    });
   }
 }
 
