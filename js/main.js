@@ -91,7 +91,6 @@ let queryParam = location.search.replaceAll("?id=", "");
           [JSON.stringify(sessionNameList)]
         );
       }
-      //dispAddedMember();
       changeMemberData();
       dispMemeber();
       //input欄の削除
@@ -113,7 +112,7 @@ let queryParam = location.search.replaceAll("?id=", "");
         $("#member-amount-input").val() == null ||
         $("#member-amount-input").val() == ""
       ) {
-        window.alert("人数を入力してください");
+        window.alert("半角数字で人数を入力してください");
         return;
       }
       if ($("#member-amount-input").val() < 2) {
@@ -203,19 +202,17 @@ function deleteFromSession(name) {
   }
 }
 
-//1/15ここまで
+//グループ分けの表示
 async function dispGroup() {
-  if ($(".group-wrapper").length) {
-    $(".group-wrapper").remove();
-  }
+  $(".group-wrapper").remove();
   await onValue(ref(database, queryParam + "/group"), (snapshot) => {
     if (snapshot.val() == null) {
       return;
     }
     const groupAmount = snapshot.val().length - 1;
     console.log("グループ数" + groupAmount);
-    const groupWrapper = `<div class="group-wrapper" style="display:none;"></div>`;
-    $(".seat-confirm-wrapper").after(groupWrapper);
+    const groupWrapper = `<div class="group-wrapper"></div>`;
+    $(".display-group").append(groupWrapper);
     let count = 1;
     for (let i = 0; i < groupAmount; i++) {
       onValue(ref(database, queryParam + "/group/" + count), (snapshot) => {
@@ -243,7 +240,6 @@ async function dispGroup() {
         count++;
       });
     }
-    $(".group-wrapper").css("display", "block");
   });
 }
 
@@ -258,7 +254,7 @@ async function makeGroup(amount) {
       return;
     }
   }
-  $(".group-wrapper").css("display", "none");
+  $(".display-group").css("display", "none");
   await set(ref(database, queryParam + "/group"), {
     null: null,
   });
@@ -286,6 +282,7 @@ async function makeGroup(amount) {
     });
   }
   dispGroup();
+  $(".display-group").css("display", "block");
 }
 
 //シャッフルロジック
