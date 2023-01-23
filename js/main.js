@@ -33,7 +33,6 @@ let queryParam = location.search.replaceAll("?id=", "");
 (function ($) {
   $(document).ready(function () {
     dispGroup();
-    console.log(queryParam);
     //クエリパラメータが存在しない場合、初期画面に飛ばす
     if (queryParam.length !== 18) {
       window.location.href = "start.html";
@@ -60,7 +59,13 @@ let queryParam = location.search.replaceAll("?id=", "");
     //開発用にセッション削除
     $("#pay-mgr").on("click", function () {
       window.sessionStorage.clear();
-      console.log("セッション削除");
+    });
+
+    //url共有ボタン
+    $("#share-url-btn").on("click", function () {
+      const url = `http://chosei-chan.sakura.ne.jp/index.html?id=${queryParam}`;
+      navigator.clipboard.writeText(url);
+      window.alert("URLがコピーされました！");
     });
 
     //名前の入力&リスト追加
@@ -158,7 +163,6 @@ async function dispMemeber() {
       return;
     }
     const nameList = Object.values(snapshot.val()["memberList"]);
-    console.log("nameList:" + nameList);
     $("#current-member-amount").text(nameList.length);
     for (let i = 0; i < nameList.length; i++) {
       const listElem = `
@@ -176,7 +180,6 @@ async function dispMemeber() {
 //追加したメンバーの削除&制御用メソッド
 function deleteFromSession(name) {
   const sessionNameList = window.sessionStorage.getItem(["nameList"]);
-  console.log("sessionNameList:" + sessionNameList.length);
   const fixedNameList = sessionNameList
     .replaceAll('"', "")
     .replaceAll("[", "")
@@ -188,9 +191,7 @@ function deleteFromSession(name) {
   if (fixedNameList == null || fixedNameList == "") {
     window.sessionStorage.clear();
     $("#current-member-amount").text("0");
-    console.log("残りメンバー0");
   } else {
-    console.log("残りメンバーが存在");
     if (fixedNameList == "") {
       window.sessionStorage.clear();
     } else {
@@ -210,7 +211,6 @@ async function dispGroup() {
       return;
     }
     const groupAmount = snapshot.val().length - 1;
-    console.log("グループ数" + groupAmount);
     const groupWrapper = `<div class="group-wrapper"></div>`;
     $(".display-group").append(groupWrapper);
     let count = 1;
@@ -241,6 +241,7 @@ async function dispGroup() {
       });
     }
   });
+  window.location.reload;
 }
 
 //人数の割り出し制御
@@ -311,7 +312,6 @@ function isSmartPhone() {
 //DBに参加者名を追加
 async function changeMemberData() {
   let sessionNameList = window.sessionStorage.getItem(["nameList"]);
-  console.log("sessionNameList:" + sessionNameList);
   if (sessionNameList == null || sessionNameList == "") {
     const nameList = [];
     await set(ref(database, queryParam + "/member"), {
@@ -324,7 +324,6 @@ async function changeMemberData() {
       .replaceAll("[", "")
       .replaceAll("]", "")
       .split(",");
-    console.log(nameList);
     await set(ref(database, queryParam + "/member"), {
       memberList: nameList,
     });
